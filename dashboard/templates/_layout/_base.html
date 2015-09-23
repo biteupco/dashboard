@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <title>Gobbl Dashboard</title>
+	<link rel="icon" href="/static/img/favicon.ico?v=2">
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1">
+	<meta name="author" content="gobbl.me" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    {% block head %}
+    {% endblock %}
+    <style>
+        {% block css %}
+        {% endblock %}
+    </style>
+</head>
+<body>
+    {% include "panels/navigation.html" %}
+    <div id="content" class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+	<script>
+        {% block js %}
+        {% endblock %}
+	</script>
+</body>
+</html>
