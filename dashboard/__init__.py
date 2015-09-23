@@ -7,6 +7,7 @@ import os
 from flask_compress import Compress
 from dashboard.libs import exceptions
 from dashboard.services.auth import AuthService
+from dashboard.services.api import APIService
 
 
 def create_app():
@@ -22,6 +23,7 @@ def create_app():
     # setup env, secret keys, etc.
     app.secret_key = os.getenv('BENRI_SECRET')  # recommended for setting up Flask session
     AuthService.set_env('dev')
+    APIService.set_env('dev')
 
     # main views
     app.register_blueprint(main.blueprint, url_prefix='/')

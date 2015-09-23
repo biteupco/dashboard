@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import division, print_function, absolute_import
 
-from flask import request, session
+from flask import request, session, redirect, render_template, url_for
 from flask.blueprints import Blueprint
 
 from dashboard.services.auth import AuthService
@@ -18,19 +18,26 @@ def login():
 
     if request.method == 'GET':
         # return LOGIN page
-        return
+        return render_template('auth/login.html')
 
     # try to login user based on payload
     provider = request.args.get('provider', constants.AUTH_BASIC)
+    redirect_url = request.args.get('redirect')
 
     # get email & password from request.form
     # NOTE: hashing done over on AuthService end, thus need to ensure SSL is used
 
     auth_service = AuthService()
-    token = auth_service.login(request.form, provider=provider)
+    payload = {key: request.form.get(key) for key in ['email', 'password']}
+    token = auth_service.login(payload, provider=provider)
     if token:
-        print(token)
         session['token'] = token
+        if redirect_url:
+            return redirect(redirect_url)
+        return redirect(url_for('menus.index'))  # defaults to menu list
+
+    return "token not found"
+
 
 
 @blueprint.route('/signup')

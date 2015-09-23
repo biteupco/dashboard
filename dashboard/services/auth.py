@@ -6,15 +6,15 @@ import json
 
 import requests
 
-from dashboard.libs.exceptions import HTTPUnauthorized
+from dashboard.libs.exceptions import HTTPBadRequest
 from dashboard import constants
 
 
 logger = logging.getLogger(__name__)
 
 
-class AuthLoginException(HTTPUnauthorized):
-    """Subclass to HTTPUnauthorized class so that app handles this exception as-if it is HTTPUnauthorized"""
+class AuthLoginException(HTTPBadRequest):
+    """Subclass to HTTPBadRequest class so that app handles this exception as-if it is HTTPBadRequest"""
     pass
 
 
@@ -35,21 +35,24 @@ class AuthService():
     def __init__(self):
         self.__dict__ = self.__state
 
-        if 'url' not in self.__dict__:
+        if 'base_url' not in self.__dict__:
             # init instance
-            self.url = self._get_base_url()
+            self.base_url = self._get_base_url()
 
     def _send_requests(self, url, method='get', params=None, payload=None):
         try:
-            url = '/'.join([url, self.url])  # concatenate URL
-            resp = requests.request(method, url, params=params, data=json.loads(payload))
+            url = '/'.join([self.base_url, url])  # concatenate URL
+            headers = {'Content-type': 'application/json'}
+            resp = requests.request(method, url, headers=headers, params=params, data=json.dumps(payload))
 
             if resp.status_code >= 400:  # error occured
-                raise Exception
+                logger.exception(resp.text)
+                raise Exception(resp.text)
 
             return resp.json() or resp.text  # return json body of response
 
-        except:
+        except Exception as e:
+            logger.exception(e.message)
             raise AuthLoginException()
 
     def login(self, payload, provider=constants.AUTH_BASIC):

@@ -18,7 +18,7 @@ class BaseException(Exception):
 
     def to_dict(self):
         return {
-            key: getattr(self, key, default='')
+            key: getattr(self, key)
             for key in ['message', 'status_code', 'payload']
         }
 

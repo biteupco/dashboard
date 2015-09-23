@@ -56,31 +56,17 @@ class APIService():
 
     def __init__(self, token):
         self.token = token
-        self.url = self._get_base_url()
-
-
-
-    def _send_requests(self, url, method='get', params=None, payload=None):
-        try:
-            url = '/'.join([url, self.url])  # concatenate URL
-            params.update({'token': self.token})  # add token for verification
-            resp = requests.request(method, url, params=params, data=json.loads(payload))
-
-            if resp.status_code >= 400:  # error occured
-                raise Exception
-
-            return resp.json() or resp.text  # return json body of response
-
-        except Exception as e:
-            raise APIException(e)
+        self.base_url = self._get_base_url()
 
     def __getattr__(self, api_call, **kwargs):
 
         def _send_requests(url, method='get', params=None, payload=None):
             try:
-                url = '/'.join([url, self.url])  # concatenate URL
+                url = '/'.join([self.base_url, url])  # concatenate URL
                 params.update({'token': self.token})  # add token for verification
-                resp = requests.request(method, url, params=params, data=json.loads(payload))
+
+                headers = {'Content-type': 'application/json'}
+                resp = requests.request(method, url, headers=headers, params=params, data=json.dumps(payload))
 
                 if resp.status_code >= 400:  # error occured
                     raise Exception
@@ -88,12 +74,17 @@ class APIService():
                 return resp.json() or resp.text  # return json body of response
 
             except Exception as e:
+                print('err: {}'.format(e))
                 raise APIException(e)
 
         if api_call not in API_MAP:
             raise APIException('unsupported method')
 
         api = API_MAP[api_call]
-        url_keys = Formatter().parse(api['url'])  # grab list of keys required to override with value in URL
-        url = api['url'].format(**{key: kwargs.pop(key) for key in url_keys})  # pad URL with required keys (e.g., id)
+        # grab list of keys required to override with value in URL
+        url_keys = [tup[1] for tup in Formatter().parse(api['url']) if tup[1] is not None]
+        url = api['url']
+        if url_keys:
+            url = url.format(**{key: kwargs.pop(key) for key in url_keys})  # pad URL with required keys (e.g., id)
+
         return _send_requests(url, api['method'], params=kwargs, payload=kwargs)
