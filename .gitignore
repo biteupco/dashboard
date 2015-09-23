@@ -1,0 +1,4 @@
+# Project
+.idea/
+.DS_Store
+*.pyc
