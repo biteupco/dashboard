@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import division, print_function, absolute_import
 
-from flask import session, jsonify, request
+from flask import session, jsonify
 from flask.blueprints import Blueprint
 
 from dashboard.services.api import APIService

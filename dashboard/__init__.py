@@ -18,7 +18,7 @@ def create_app():
     Compress().init_app(app)
 
     # import blueprints
-    from dashboard.views import main, auth, accounts, menus, restaurants
+    from dashboard.views import main, auth, accounts, menus, restaurants, dashboard
 
     # setup env, secret keys, etc.
     app.secret_key = os.getenv('BENRI_SECRET')  # recommended for setting up Flask session
@@ -28,6 +28,7 @@ def create_app():
     # main views
     app.register_blueprint(main.blueprint, url_prefix='/')
     app.register_blueprint(auth.blueprint, url_prefix='/auth')
+    app.register_blueprint(dashboard.blueprint, url_prefix='/dashboard')
 
     # user-specific views
     app.register_blueprint(accounts.blueprint, url_prefix='/accounts')
