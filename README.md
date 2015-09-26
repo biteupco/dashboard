@@ -5,7 +5,7 @@ Dashboard is a front-end Admin Control Panel for Restaurant managers, Gobbl staf
 Built with Python (Flask framework).
 
 <p align="center">
-  <img src="screenshots/benri_logo.png">
+  <img src="screenshots/signup.png">
 </p>
 
 
