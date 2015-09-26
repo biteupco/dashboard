@@ -5,4 +5,4 @@ from dashboard import create_app
 app = create_app()
 
 # note: turn debug off when in production
-app.run(debug=True)
+# app.run(debug=True)
