@@ -23,6 +23,10 @@ class BaseException(Exception):
         }
 
 
+class HTTPInternalServerError(BaseException):
+    pass
+
+
 class HTTPBadRequest(BaseException):
     status_code = 400
     message = "Invalid request."

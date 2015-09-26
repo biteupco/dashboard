@@ -38,6 +38,10 @@ class AuthService():
         if 'base_url' not in self.__dict__:
             # init instance
             self.base_url = self._get_base_url()
+            self.url_map = {
+                constants.AUTH_BASIC: 'auth/login/basic',
+                constants.AUTH_FACEBOOK: 'auth/login/facebook'
+            }
 
     def _send_requests(self, url, method='get', params=None, payload=None):
         try:
@@ -55,24 +59,9 @@ class AuthService():
             logger.exception(e.message)
             raise AuthLoginException()
 
-    def login(self, payload, provider=constants.AUTH_BASIC):
-        """Login method to authenticate against AuthService, returning token if successful"""
-
-        # supported login methods
-        supported_login_methods = [constants.AUTH_BASIC]
-
-        url_map = {
-            constants.AUTH_BASIC: 'auth/login/basic',
-            constants.AUTH_FACEBOOK: 'auth/login/facebook'
-        }
-
-        if provider not in supported_login_methods:
-            err_msg = '{} login is currently not supported.'.format(provider)
-            logger.exception(err_msg)
-            raise Exception(err_msg)
-
-        # get json response from AuthService
-        json_resp = self._send_requests(url_map[provider], method='post', payload=payload)
+    def _login(self, payload, provider):
+        """Base method to login/signup with AuthService, returning a valid SSO token if successful"""
+        json_resp = self._send_requests(self.url_map[provider], method='post', payload=payload)
         token = json_resp.get('token')
         if not token:
             err_msg = 'token not found in response'
@@ -80,3 +69,29 @@ class AuthService():
             raise Exception(err_msg)
 
         return token
+
+    def login(self, payload, provider=constants.AUTH_BASIC):
+        """Login method to authenticate against AuthService, returning token if successful"""
+
+        # supported login methods
+        supported_login_methods = [constants.AUTH_BASIC]
+
+        if provider not in supported_login_methods:
+            err_msg = '{} login is currently not supported.'.format(provider)
+            logger.exception(err_msg)
+            raise Exception(err_msg)
+
+        return self._login(payload, provider)
+
+    def signup(self, payload, provider=constants.AUTH_BASIC):
+        """Signup method to register new user with AuthService; returning token if successful"""
+
+        # supported signup methods
+        supported_login_methods = [constants.AUTH_BASIC]
+
+        if provider not in supported_login_methods:
+            err_msg = '{} login is currently not supported.'.format(provider)
+            logger.exception(err_msg)
+            raise Exception(err_msg)
+
+        return self._login(payload, provider)
