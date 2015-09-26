@@ -14,5 +14,5 @@ def main():
         # user is logged in
         return redirect(url_for('dashboard.index'))
 
-    return redirect('auth.login')
+    return redirect(url_for('auth.login'))
 
