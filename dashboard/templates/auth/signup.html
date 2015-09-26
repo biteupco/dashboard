@@ -6,7 +6,7 @@
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <img src="/static/img/logo-clean_16x16.png" />&nbsp;&nbsp;<strong>Already have an account?</strong> <a href="{{url_for('auth.login')}}" class="alert-link">Login here</a> instead, mate!
 </div>
-<form method="post" action="http://localhost:5000/auth/signup?provider=basic">
+<form method="post" action="{{ url_for('auth.signup', provider='basic') }}">
   <div class="row">
     <div class="col-sm-6">
       <div class="form-group">
