@@ -22,8 +22,9 @@ def create_app():
 
     # setup env, secret keys, etc.
     app.secret_key = os.getenv('BENRI_SECRET')  # recommended for setting up Flask session
-    AuthService.set_env('dev')
-    APIService.set_env('dev')
+    env = os.getenv('BENRI_ENV') or 'dev'
+    AuthService.set_env(env)
+    APIService.set_env(env)
 
     # main views
     app.register_blueprint(main.blueprint, url_prefix='/')
