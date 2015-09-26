@@ -1,0 +1,35 @@
+{% extends "_layout/_base.html" %}
+{% block content %}
+<h1>Sign Up</h1>
+<br>
+<div class="alert alert-info alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <img src="/static/img/logo-clean_16x16.png" />&nbsp;&nbsp;<strong>Already have an account?</strong> <a href="{{url_for('auth.login')}}" class="alert-link">Login here</a> instead, mate!
+</div>
+<form method="post" action="http://localhost:5000/auth/signup?provider=basic">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label for="first_name">First Name</label>
+        <input type="first_name" name="first_name" class="form-control" id="first_name" placeholder="First Name">
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label for="last_name">Last Name</label>
+        <input type="last_name" name="last_name" class="form-control" id="last_name" placeholder="Last Name">
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="email">Email address</label>
+    <input type="email" name="email" class="form-control" id="email" placeholder="Email">
+  </div>
+  <div class="form-group">
+    <label for="pwd">Password</label>
+    <input type="password" name="password" class="form-control" id="pwd" placeholder="Password">
+  </div>
+  <button type="submit" class="btn btn-warning btn-block">Let me in</button>
+</form>
+
+{% endblock %}

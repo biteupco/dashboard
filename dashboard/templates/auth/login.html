@@ -1,6 +1,11 @@
 {% extends "_layout/_base.html" %}
 {% block content %}
 <h1>Login</h1>
+<br>
+<div class="alert alert-info alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <img src="/static/img/logo-clean_16x16.png" />&nbsp;&nbsp;<strong>New to Gobbl?</strong> <a href="{{url_for('auth.signup')}}" class="alert-link">Signup with us here!</a>
+</div>
 <form method="post" action="http://localhost:5000/auth/login?provider=basic">
   <div class="form-group">
     <label for="email">Email address</label>
@@ -10,6 +15,6 @@
     <label for="pwd">Password</label>
     <input type="password" name="password" class="form-control" id="pwd" placeholder="Password">
   </div>
-  <button type="submit" class="btn btn-primary">Login</button>
+  <button type="submit" class="btn btn-primary btn-block">Login</button>
 </form>
 {% endblock %}
