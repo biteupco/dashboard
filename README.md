@@ -34,7 +34,7 @@ $ pip install -r requirements.txt
 ## Up and Running
 
 ```
-$ python runserver.py
+$ gunicorn -b 0.0.0.0:5000 dashboard:app
 ```
 
 Point your browser to localhost:5000/auth/login, and sign in as usual (assuming you have Bouncer and MongoDB running).
