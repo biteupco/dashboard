@@ -60,15 +60,16 @@ class AuthService():
             raise AuthLoginException()
 
     def _login(self, payload, provider):
-        """Base method to login/signup with AuthService, returning a valid SSO token if successful"""
+        """Base method to login/signup with AuthService, returning a valid SSO token and user_id if successful"""
         json_resp = self._send_requests(self.url_map[provider], method='post', payload=payload)
         token = json_resp.get('token')
+        user_id = json_resp.get('user_id')
         if not token:
             err_msg = 'token not found in response'
             logger.exception(err_msg)
             raise Exception(err_msg)
 
-        return token
+        return token, user_id
 
     def login(self, payload, provider=constants.AUTH_BASIC):
         """Login method to authenticate against AuthService, returning token if successful"""

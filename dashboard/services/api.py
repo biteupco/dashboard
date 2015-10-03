@@ -2,6 +2,7 @@
 from __future__ import division, print_function, absolute_import
 
 import logging
+import copy
 import json
 from string import Formatter
 import requests
@@ -41,6 +42,10 @@ API_MAP = {
         'url': 'tags',
         'method': 'get'
     },
+    'get_user': {
+        'url': 'users/{id}',
+        'method': 'get'
+    }
 }
 
 
@@ -58,15 +63,25 @@ class APIService():
         self.token = token
         self.base_url = self._get_base_url()
 
-    def __getattr__(self, api_call, **kwargs):
+    def __getattr__(self, api_call):
 
-        def _send_requests(url, method='get', params=None, payload=None):
+        def _send_requests(self, **kwargs):
+            if api_call not in API_MAP:
+                raise APIException('unsupported method')
+
+            fn = API_MAP[api_call]
+            kwargs = copy.deepcopy(kwargs)
+
             try:
-                url = '/'.join([self.base_url, url])  # concatenate URL
+                url = '/'.join([self.base_url, fn['url']])  # concatenate URL
+                params = kwargs
                 params.update({'token': self.token})  # add token for verification
+                url_keys = [tup[1] for tup in Formatter().parse(fn['url']) if tup[1] is not None]
+                if url_keys:
+                    url = url.format(**{key: kwargs.pop(key) for key in url_keys})  # pad URL with required keys (e.g., id)
 
                 headers = {'Content-type': 'application/json'}
-                resp = requests.request(method, url, headers=headers, params=params, data=json.dumps(payload))
+                resp = requests.request(fn['method'], url, headers=headers, params=params, data=json.dumps(kwargs))
 
                 if resp.status_code >= 400:  # error occured
                     raise Exception
@@ -74,17 +89,7 @@ class APIService():
                 return resp.json() or resp.text  # return json body of response
 
             except Exception as e:
-                print('err: {}'.format(e))
-                raise APIException(e)
+                print(e.message)
+                raise APIException(e.message)
 
-        if api_call not in API_MAP:
-            raise APIException('unsupported method')
-
-        api = API_MAP[api_call]
-        # grab list of keys required to override with value in URL
-        url_keys = [tup[1] for tup in Formatter().parse(api['url']) if tup[1] is not None]
-        url = api['url']
-        if url_keys:
-            url = url.format(**{key: kwargs.pop(key) for key in url_keys})  # pad URL with required keys (e.g., id)
-
-        return _send_requests(url, api['method'], params=kwargs, payload=kwargs)
+        return _send_requests.__get__(self)

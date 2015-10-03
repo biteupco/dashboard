@@ -14,6 +14,6 @@ blueprint = Blueprint('restaurants', __name__)
 def index():
     api_service = APIService(session.get('token'))  # get user's SSO token from session
 
-    payload = api_service.get_restaurants
+    payload = api_service.get_restaurants()
     restaurants = payload['items']
     return jsonify({'restaurants': restaurants})
