@@ -14,8 +14,11 @@ from dashboard import constants
 logger = logging.getLogger(__name__)
 blueprint = Blueprint('auth', __name__)
 
-LOGIN_FORM_KEYS = ['email', 'password']
-SIGNUP_FORM_KEYS = LOGIN_FORM_KEYS + ['first_name', 'last_name']
+LOGIN_FORM_KEYS = {
+    constants.AUTH_BASIC: ['email', 'password'],
+    constants.AUTH_FACEBOOK: ['access_token', 'id', 'email']
+}
+SIGNUP_FORM_KEYS = LOGIN_FORM_KEYS[constants.AUTH_BASIC] + ['first_name', 'last_name']
 
 
 @blueprint.route('/login', methods=['POST', 'GET'])
@@ -34,14 +37,14 @@ def login():
     # NOTE: hashing done over on AuthService end, thus need to ensure SSL is used
 
     auth_service = AuthService()
-    payload = {key: request.form.get(key) for key in LOGIN_FORM_KEYS}
+    payload = {key: request.form.get(key) for key in LOGIN_FORM_KEYS[provider]}
     token, user_id = auth_service.login(payload, provider=provider)
     if token and user_id:
         session['token'] = token
         session['user_id'] = user_id
         if redirect_url:
             return redirect(redirect_url)
-        return redirect(url_for('menus.index'))  # defaults to menu list
+        return redirect(url_for('accounts.index'))  # defaults to accounts page
 
     raise HTTPInternalServerError("error logging in")
 

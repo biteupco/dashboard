@@ -75,7 +75,7 @@ class AuthService():
         """Login method to authenticate against AuthService, returning token if successful"""
 
         # supported login methods
-        supported_login_methods = [constants.AUTH_BASIC]
+        supported_login_methods = [constants.AUTH_BASIC, constants.AUTH_FACEBOOK]
 
         if provider not in supported_login_methods:
             err_msg = '{} login is currently not supported.'.format(provider)
